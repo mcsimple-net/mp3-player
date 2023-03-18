@@ -54,8 +54,6 @@ public class MusicActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-
-
         title = getIntent().getStringExtra("title");
         filePath = getIntent().getStringExtra("filePath");
         position = getIntent().getIntExtra("position", 0);
@@ -68,7 +66,7 @@ public class MusicActivity extends AppCompatActivity {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                buttonPlayPause.setText("Play");
+
                 buttonPlayPause.setBackgroundResource(R.drawable.play);
             }
         });
