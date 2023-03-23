@@ -41,16 +41,13 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         Log.e("File path : ", filePath);
         final String title = filePath.substring(filePath.lastIndexOf("/") + 1);
         holder.textViewFileName.setText(title);
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, MusicActivity.class);
-                intent.putExtra("title", title);
-                intent.putExtra("filePath", filePath);
-                intent.putExtra("position", position);
-                intent.putExtra("list", list);
-                mContext.startActivity(intent);
-            }
+        holder.cardView.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, MusicActivity.class);
+            intent.putExtra("title", title);
+            intent.putExtra("filePath", filePath);
+            intent.putExtra("position", position);
+            intent.putExtra("list", list);
+            mContext.startActivity(intent);
         });
 
     }
