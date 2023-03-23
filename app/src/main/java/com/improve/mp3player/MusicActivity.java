@@ -52,7 +52,7 @@ public class MusicActivity extends AppCompatActivity {
         animation = AnimationUtils.loadAnimation(this, R.anim.translate_animation);
         textViewFileNameMusic.setAnimation(animation);
 
-        Intent intent = getIntent();
+       // Intent intent = getIntent();
 
         title = getIntent().getStringExtra("title");
         filePath = getIntent().getStringExtra("filePath");
@@ -63,13 +63,7 @@ public class MusicActivity extends AppCompatActivity {
 
         mediaPlayer = new MediaPlayer();
 
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-
-                buttonPlayPause.setBackgroundResource(R.drawable.play);
-            }
-        });
+        mediaPlayer.setOnCompletionListener(mediaPlayer -> buttonPlayPause.setBackgroundResource(R.drawable.play));
 
         try {
             mediaPlayer.setDataSource(filePath);
@@ -122,6 +116,8 @@ public class MusicActivity extends AppCompatActivity {
                 position++;
             }
 
+            onNewFilePath();
+/*
             String newFilePath = list.get(position);
 
             try {
@@ -139,7 +135,7 @@ public class MusicActivity extends AppCompatActivity {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
+*/
         });
         buttonPlayPause.setOnClickListener(view -> {
            if (mediaPlayer.isPlaying())
@@ -199,57 +195,58 @@ public class MusicActivity extends AppCompatActivity {
         });
 
         handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
+        runnable = () -> {
 
-                totalTime = mediaPlayer.getDuration();
-                musicSeekBar.setMax(totalTime);
+            totalTime = mediaPlayer.getDuration();
+            musicSeekBar.setMax(totalTime);
 
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                musicSeekBar.setProgress(currentPosition);
-                handler.postDelayed(runnable, 1000);
+            int currentPosition = mediaPlayer.getCurrentPosition();
+            musicSeekBar.setProgress(currentPosition);
+            handler.postDelayed(runnable, 1000);
 
-                String elapsedTime = createTimeLable(currentPosition);
-                String lastTime = createTimeLable(totalTime);
+            String elapsedTime = createTimeLable(currentPosition);
+            String lastTime = createTimeLable(totalTime);
 
-                textViewProgress.setText(elapsedTime);
-                textViewTotalTime.setText(lastTime);
+            textViewProgress.setText(elapsedTime);
+            textViewTotalTime.setText(lastTime);
 
-                if (elapsedTime.equals(lastTime))
+            if (elapsedTime.equals(lastTime))
+            {
+                mediaPlayer.reset();
+
+                if (position == list.size() - 1)
                 {
-                    mediaPlayer.reset();
-
-                    if (position == list.size() - 1)
-                    {
-                        position = 0;
-                    }
-                    else
-                    {
-                        position++;
-                    }
-
-                    String newFilePath = list.get(position);
-
-                    try {
-                        mediaPlayer.setDataSource(newFilePath);
-                        mediaPlayer.prepare();
-                        mediaPlayer.start();
-
-                        buttonPlayPause.setBackgroundResource(R.drawable.pause);
-                        String newTitle = newFilePath.substring(newFilePath.lastIndexOf("/") + 1);
-                        textViewFileNameMusic.setText(newTitle);
-
-                        textViewFileNameMusic.clearAnimation();
-                        textViewFileNameMusic.startAnimation(animation);
-
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    position = 0;
+                }
+                else
+                {
+                    position++;
                 }
 
+                onNewFilePath();
+/*
+                String newFilePath = list.get(position);
 
+                try {
+                    mediaPlayer.setDataSource(newFilePath);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+
+                    buttonPlayPause.setBackgroundResource(R.drawable.pause);
+                    String newTitle = newFilePath.substring(newFilePath.lastIndexOf("/") + 1);
+                    textViewFileNameMusic.setText(newTitle);
+
+                    textViewFileNameMusic.clearAnimation();
+                    textViewFileNameMusic.startAnimation(animation);
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+ */
             }
+
+
         };
 
         handler.post(runnable);
@@ -275,4 +272,26 @@ public class MusicActivity extends AppCompatActivity {
 
         return timeLablel;
     }
+
+    public void onNewFilePath()
+    {
+        String newFilePath = list.get(position);
+
+        try {
+            mediaPlayer.setDataSource(newFilePath);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+
+            buttonPlayPause.setBackgroundResource(R.drawable.pause);
+            String newTitle = newFilePath.substring(newFilePath.lastIndexOf("/") + 1);
+            textViewFileNameMusic.setText(newTitle);
+
+            textViewFileNameMusic.clearAnimation();
+            textViewFileNameMusic.startAnimation(animation);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
